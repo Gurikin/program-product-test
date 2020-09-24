@@ -16,6 +16,7 @@ use Exception;
 class DateFromStringHelper
 {
     private const DATE_FORMAT = 'Y-m-d';
+    private const DEFAULT_DATE = '+7 days';
 
     /**
      * @param string $dateString
@@ -25,7 +26,7 @@ class DateFromStringHelper
     public static function executeHelp(string $dateString): DateTimeInterface
     {
         try {
-            $resultDate = new DateTime($dateString);
+            $resultDate = new DateTime($dateString ?? self::DEFAULT_DATE);
         } catch (Exception $e) {
             throw new HelperException('Не удалось получить объект DateTime из строки. Формат входных данных должен соотвествовать: ' . self::DATE_FORMAT);
         }
