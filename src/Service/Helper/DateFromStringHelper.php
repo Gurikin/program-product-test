@@ -22,15 +22,18 @@ class DateFromStringHelper
      * @param string $dateString
      * @return DateTimeInterface
      * @throws HelperException
+     * @throws Exception
      */
     public static function executeHelp(string $dateString): DateTimeInterface
     {
+        if (!preg_match('~^([\d]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][\d]|3[0-1])$~',$dateString)) {
+            throw new HelperException('Указан неверный формат даты. Формат входных данных должен соотвествовать: ' . self::DATE_FORMAT);
+        }
         try {
-            $resultDate = new DateTime($dateString ?? self::DEFAULT_DATE);
-        } catch (Exception $e) {
-            throw new HelperException('Не удалось получить объект DateTime из строки. Формат входных данных должен соотвествовать: ' . self::DATE_FORMAT);
+            return new DateTime($dateString ?? self::DEFAULT_DATE);
+        } catch (Exception $ex) {
+            throw $ex;
         }
 
-        return $resultDate;
     }
 }

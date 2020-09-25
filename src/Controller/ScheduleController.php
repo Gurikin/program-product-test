@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Exception\HelperException;
 use App\Model\DateRange;
 use App\Service\Helper\DateFromStringHelper;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,17 +19,27 @@ final class ScheduleController extends AbstractController
      * @param string $minDateString
      * @param string|null $maxDateString
      * @return JsonResponse
+     * @throws Exception
      */
     public function findTimeMap(int $eventId, string $minDateString, ?string $maxDateString = null): JsonResponse
     {
+        $status = Response::HTTP_OK;
+
         try {
             $minDate = DateFromStringHelper::executeHelp($minDateString);
             $maxDate = DateFromStringHelper::executeHelp($maxDateString);
+            $dateRange = new DateRange($minDate, $maxDate);
+            $message = ['message' => $dateRange];
         } catch (HelperException $ex) {
-            return $this->json($ex->getMessage(), Response::HTTP_BAD_REQUEST);
+            $message = ['warning' => $ex->getMessage()];
+            $status = Response::HTTP_BAD_REQUEST;
+        } catch (Exception $ex) {
+            $message = ['error' => $ex->getMessage()];
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
-        $dateRange = new DateRange($minDate, $maxDate);
-        return $this->json($dateRange);
+        return $this
+            ->json($message, $status)
+            ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }
