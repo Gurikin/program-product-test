@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class ScheduleController extends AbstractController
 {
     /**
-     * @Route("/schedule/timeMapRange/{eventId}/{minDateString}/{maxDateString}", name="schedule", methods={"GET"})
+     * @Route("/schedule/timeMapRange/{eventId}/{minDateString}/{maxDateString}", name="schedule", methods={"GET"}, requirements={"eventId"="\d+"})
      * @param int $eventId
      * @param string $minDateString
      * @param string|null $maxDateString
@@ -28,7 +28,7 @@ final class ScheduleController extends AbstractController
 
         try {
             $minDate = DateFromStringHelper::executeHelp($minDateString);
-            $maxDate = DateFromStringHelper::executeHelp($maxDateString);
+            $maxDate = DateFromStringHelper::executeHelp($maxDateString ?? $minDateString . ' +7 days');
             $dateRange = new DateRange($minDate, $maxDate);
             $message = ['message' => $dateRange];
         } catch (HelperException|ModelException $ex) {
