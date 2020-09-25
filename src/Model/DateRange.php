@@ -8,6 +8,7 @@
 namespace App\Model;
 
 
+use App\Exception\ModelException;
 use DateTimeInterface;
 
 final class DateRange
@@ -26,6 +27,11 @@ final class DateRange
     {
         $this->minDate = $minDate;
         $this->maxDate = $maxDate;
+        if (!$this->checkRange()) {
+            throw new ModelException(
+                'Максимальная граница диапозона дат не может быть меньше минимальной. Проверьте входные данные.'
+            );
+        }
     }
 
     /**
@@ -49,6 +55,6 @@ final class DateRange
      */
     public function checkRange(): bool
     {
-        return $this->minDate < $this->maxDate;
+        return $this->minDate <= $this->maxDate;
     }
 }

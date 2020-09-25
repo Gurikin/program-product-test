@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Exception\HelperException;
+use App\Exception\ModelException;
 use App\Model\DateRange;
 use App\Service\Helper\DateFromStringHelper;
 use Exception;
@@ -30,7 +31,7 @@ final class ScheduleController extends AbstractController
             $maxDate = DateFromStringHelper::executeHelp($maxDateString);
             $dateRange = new DateRange($minDate, $maxDate);
             $message = ['message' => $dateRange];
-        } catch (HelperException $ex) {
+        } catch (HelperException|ModelException $ex) {
             $message = ['warning' => $ex->getMessage()];
             $status = Response::HTTP_BAD_REQUEST;
         } catch (Exception $ex) {
